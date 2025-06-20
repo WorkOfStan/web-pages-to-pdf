@@ -35,8 +35,24 @@ jobs:
         with:
           commit-changes: ${{ github.event_name != 'schedule' }}
 
-  super-linter:
+  ruff-action:
     needs: prettier-fix
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: write
+    timeout-minutes: 10
+    steps:
+      - name: ruff-action
+        # This action adds ruff to the PATH, so you can use it in subsequent steps.
+        uses: astral-sh/ruff-action@v3.4.0
+
+      - name: "ruff fix and format"
+        run: |
+          ruff check --fix
+          ruff format
+
+  super-linter:
+    needs: ruff-action
     uses: WorkOfStan/seablast-actions/.github/workflows/linter.yml@v0.2.3
     with:
       runs-on: "ubuntu-latest"
