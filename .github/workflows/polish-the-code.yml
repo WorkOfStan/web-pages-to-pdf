@@ -59,6 +59,7 @@ jobs:
 
           # Todo below only if changed
           RBRANCH_NAME="ruff/fix-$(date +'%y%m%d%H%M%S')-$(git rev-parse --short HEAD)"
+          echo "${RBRANCH_NAME}"
           git checkout -b "$RBRANCH_NAME"
           RNOTICE_MESSAGE="A Ruff commit was added to the new branch: $RBRANCH_NAME"
           
@@ -75,8 +76,8 @@ jobs:
           echo "::notice title=Ruff commit adding::${RNOTICE_MESSAGE}"
           git push origin "${RBRANCH_NAME}"
 
-          RCOMMIT_URL=${{ github.server_url }}/${{ github.repository }}/commit/$(git rev-parse HEAD)
-          echo "::notice title=View the Ruff commit::${RCOMMIT_URL}"
+          #RCOMMIT_URL=${{ github.server_url }}/${{ github.repository }}/commit/$(git rev-parse HEAD)
+          #echo "::notice title=View the Ruff commit::${RCOMMIT_URL}"
         shell: bash
 
   super-linter:
