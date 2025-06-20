@@ -34,7 +34,7 @@ jobs:
         uses: WorkOfStan/prettier-fix@feature/leveldebug
         with:
           commit-changes: ${{ github.event_name != 'schedule' }}
-          debug: true
+          debug: false
 
   ruff-action:
     needs: prettier-fix
