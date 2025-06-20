@@ -43,6 +43,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: ruff-action
+        uses: actions/checkout@v4
         # This action adds ruff to the PATH, so you can use it in subsequent steps.
         uses: astral-sh/ruff-action@v3.4.0
         with:
