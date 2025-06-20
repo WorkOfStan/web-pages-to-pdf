@@ -34,6 +34,7 @@ jobs:
         uses: WorkOfStan/prettier-fix@v1.1.4
         with:
           commit-changes: ${{ github.event_name != 'schedule' }}
+          debug: true
 
   ruff-action:
     needs: prettier-fix
