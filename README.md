@@ -25,7 +25,7 @@ Pocket is sunsetting, so export your links while you can! This tool converts you
 
 - Python 3.7+
 - `pdfkit` Python package (`pip install pdfkit`)
-- `wkhtmltopdf` binary installed and in your PATH (https://wkhtmltopdf.org/)
+- `wkhtmltopdf` binary installed and in your PATH (<https://wkhtmltopdf.org/>)
 
 ## Usage
 
