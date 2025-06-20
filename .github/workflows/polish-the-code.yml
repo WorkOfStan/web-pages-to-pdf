@@ -46,12 +46,12 @@ jobs:
         # This action adds ruff to the PATH, so you can use it in subsequent steps.
         uses: astral-sh/ruff-action@v3.4.0
 
-      #- name: "ruff fix and format"
-      #  run: |
-      #    ruff --version
-      #    ruff check --fix
-      #    ruff format
-      #  shell: bash
+      - name: "ruff fix and format"
+        run: |
+          ruff --version
+          #    ruff check --fix
+          #    ruff format
+        shell: bash
 
   super-linter:
     needs: ruff-action
