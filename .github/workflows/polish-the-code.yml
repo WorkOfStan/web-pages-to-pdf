@@ -61,21 +61,21 @@ jobs:
           # Todo below only if changed
           RBRANCH_NAME="ruff/fix-$(date +'%y%m%d%H%M%S')-$(git rev-parse --short HEAD)"
           echo "${RBRANCH_NAME}"
-          git checkout -b "$RBRANCH_NAME"
-          RNOTICE_MESSAGE="A Ruff commit was added to the new branch: $RBRANCH_NAME"
+          #git checkout -b "$RBRANCH_NAME"
+          #RNOTICE_MESSAGE="A Ruff commit was added to the new branch: $RBRANCH_NAME"
           
           # Only add changed non-workflow files, safe for spaces
-          git status --porcelain | awk '{print $2}' | grep -vE '^.github/workflows/' | while IFS= read -r file; do git add "$file"; done
+          #git status --porcelain | awk '{print $2}' | grep -vE '^.github/workflows/' | while IFS= read -r file; do git add "$file"; done
 
           # Configure Git user
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          #git config user.name "github-actions[bot]"
+          #git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           # Commit and push changes with custom message
-          git commit -m "inputs.commit-message on $(date +'%Y-%m-%d %H:%M:%S') UTC"
+          #git commit -m "inputs.commit-message on $(date +'%Y-%m-%d %H:%M:%S') UTC"
 
-          echo "::notice title=Ruff commit adding::${RNOTICE_MESSAGE}"
-          git push origin "${RBRANCH_NAME}"
+          #echo "::notice title=Ruff commit adding::${RNOTICE_MESSAGE}"
+          #git push origin "${RBRANCH_NAME}"
 
           #RCOMMIT_URL=${{ github.server_url }}/${{ github.repository }}/commit/$(git rev-parse HEAD)
           #echo "::notice title=View the Ruff commit::${RCOMMIT_URL}"
