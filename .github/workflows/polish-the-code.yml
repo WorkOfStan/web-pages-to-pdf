@@ -45,10 +45,12 @@ jobs:
       - name: ruff-action
         # This action adds ruff to the PATH, so you can use it in subsequent steps.
         uses: astral-sh/ruff-action@v3.4.0
+        with:
+          args: "--version"
 
       - name: "ruff fix and format"
         run: |
-          ruff --version
+          #ruff --version
           ruff check --fix .
           ruff format .
         shell: bash
