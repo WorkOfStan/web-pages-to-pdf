@@ -50,7 +50,7 @@ jobs:
         run: |
           ruff --version
           ruff check --fix
-          #    ruff format
+          ruff format
         shell: bash
 
   super-linter:
