@@ -49,7 +49,7 @@ jobs:
       - name: "ruff fix and format"
         run: |
           ruff --version
-          #    ruff check --fix
+          ruff check --fix
           #    ruff format
         shell: bash
 
