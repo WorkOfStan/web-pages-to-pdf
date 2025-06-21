@@ -35,7 +35,7 @@ jobs:
         with:
           commit-changes: ${{ github.event_name != 'schedule' }}
 
-  super-linter:
+  super-linter:   
     needs: prettier-fix
     uses: WorkOfStan/seablast-actions/.github/workflows/linter.yml@v0.2.3
     with:
