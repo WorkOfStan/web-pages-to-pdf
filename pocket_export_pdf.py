@@ -1,10 +1,11 @@
+import argparse
 import os
 import re
-import argparse
+from urllib.parse import urlparse
+
 import pdfkit
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
 
 WAYBACK_API = "http://archive.org/wayback/available?url={url}"
 

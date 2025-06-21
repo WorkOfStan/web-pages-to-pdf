@@ -4,14 +4,14 @@ Convert your Pocket export or any URL list into organized PDFs for offline backu
 
 A simple Python tool to convert your Pocket export or any URL+label list into PDFs, organized by labels for easy offline backup.
 
-Pocket is sunsetting — export your saved articles now and archive them as PDFs, sorted in folders by tags.  
+[Pocket is sunsetting](https://support.mozilla.org/en-US/kb/future-of-pocket) — export your saved articles now and archive them as PDFs, sorted in folders by tags.
 Supports fallback to Wayback Machine if the original page is inaccessible.
 
 A tool to export and archive your Pocket saved URLs as PDFs organized by labels.
 
 ## Why?
 
-Pocket is sunsetting, so export your links while you can! This tool converts your Pocket export or any URL+label list into PDFs stored in folders by labels.
+[Pocket is sunsetting](https://support.mozilla.org/en-US/kb/future-of-pocket), so export your links while you can! This tool converts your Pocket export or any URL+label list into PDFs stored in folders by labels.
 
 ## Features
 
