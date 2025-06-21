@@ -8,9 +8,11 @@ from urllib.parse import urlparse
 
 WAYBACK_API = "http://archive.org/wayback/available?url={url}"
 
+
 def sanitize_filename(name):
     # Remove invalid filename characters
     return re.sub(r'[\\/*?:"<>|]', "", name).strip()
+
 
 def fetch_wayback_url(url):
     """Check archive.org for closest snapshot URL."""
@@ -18,20 +20,21 @@ def fetch_wayback_url(url):
         r = requests.get(WAYBACK_API.format(url=url), timeout=10)
         r.raise_for_status()
         data = r.json()
-        snapshots = data.get('archived_snapshots', {})
-        if 'closest' in snapshots:
-            return snapshots['closest']['url']
+        snapshots = data.get("archived_snapshots", {})
+        if "closest" in snapshots:
+            return snapshots["closest"]["url"]
     except Exception as e:
         print(f"Wayback API error for {url}: {e}")
     return None
 
+
 def download_pdf(url, output_path):
     """Download URL as PDF with pdfkit."""
     options = {
-        'quiet': '',
-        'enable-local-file-access': '',
-        'no-outline': None,
-        'print-media-type': None
+        "quiet": "",
+        "enable-local-file-access": "",
+        "no-outline": None,
+        "print-media-type": None,
     }
     try:
         pdfkit.from_url(url, output_path, options=options)
@@ -41,29 +44,31 @@ def download_pdf(url, output_path):
         print(f"Failed to save PDF for {url}: {e}")
         return False
 
+
 def parse_pocket_export(file_path):
     """Parse Pocket export HTML and return list of dict {url, title, tags}."""
-    with open(file_path, 'r', encoding='utf-8') as f:
-        soup = BeautifulSoup(f, 'html.parser')
+    with open(file_path, "r", encoding="utf-8") as f:
+        soup = BeautifulSoup(f, "html.parser")
     links = []
-    for a in soup.find_all('a', href=True):
-        url = a['href']
+    for a in soup.find_all("a", href=True):
+        url = a["href"]
         title = a.get_text(strip=True) or "untitled"
-        tags = a.get('data-tag')
+        tags = a.get("data-tag")
         if tags:
-            tags = [t.strip() for t in tags.split(',')]
+            tags = [t.strip() for t in tags.split(",")]
         else:
             tags = []
-        links.append({'url': url, 'title': title, 'tags': tags})
+        links.append({"url": url, "title": title, "tags": tags})
     return links
+
 
 def save_pdfs(links, base_dir):
     """Download PDFs for all links, organized by tags."""
     os.makedirs(base_dir, exist_ok=True)
     for idx, link in enumerate(links, 1):
-        url = link['url']
-        title = sanitize_filename(link['title']) or f"page_{idx}"
-        tags = link['tags'] or ['Unlabeled']
+        url = link["url"]
+        title = sanitize_filename(link["title"]) or f"page_{idx}"
+        tags = link["tags"] or ["Unlabeled"]
 
         folder = os.path.join(base_dir, sanitize_filename(tags[0]))
         os.makedirs(folder, exist_ok=True)
@@ -82,10 +87,15 @@ def save_pdfs(links, base_dir):
         else:
             print(f"Could not archive or download {url}")
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Convert Pocket export or URL list to PDFs")
-    parser.add_argument('--input', required=True, help='Path to Pocket export HTML file')
-    parser.add_argument('--output', required=True, help='Output directory for PDFs')
+    parser = argparse.ArgumentParser(
+        description="Convert Pocket export or URL list to PDFs"
+    )
+    parser.add_argument(
+        "--input", required=True, help="Path to Pocket export HTML file"
+    )
+    parser.add_argument("--output", required=True, help="Output directory for PDFs")
     args = parser.parse_args()
 
     print(f"Parsing export file: {args.input}")
@@ -93,6 +103,7 @@ def main():
     print(f"Found {len(links)} links.")
 
     save_pdfs(links, args.output)
+
 
 if __name__ == "__main__":
     main()
