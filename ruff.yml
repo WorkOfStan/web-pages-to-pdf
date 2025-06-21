@@ -48,7 +48,7 @@ jobs:
           echo "${RBRANCH_NAME}"
           #git checkout -b "$RBRANCH_NAME"
           #RNOTICE_MESSAGE="A Ruff commit was added to the new branch: $RBRANCH_NAME"
-          
+
           # Only add changed non-workflow files, safe for spaces
           #git status --porcelain | awk '{print $2}' | grep -vE '^.github/workflows/' | while IFS= read -r file; do git add "$file"; done
 
