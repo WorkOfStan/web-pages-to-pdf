@@ -53,7 +53,6 @@ jobs:
 
       - name: "ruff fix and format"
         run: |
-          #ruff --version
           ruff check --fix .
           ruff format .
 
@@ -64,7 +63,7 @@ jobs:
             RBRANCH_NAME="ruff/fix-$(date +'%y%m%d%H%M%S')-$(git rev-parse --short HEAD)"
             echo "${RBRANCH_NAME}"
             git checkout -b "$RBRANCH_NAME"
-            RNOTICE_MESSAGE="A Ruff commit was added to the new branch: $RBRANCH_NAME"
+            #RNOTICE_MESSAGE="A Ruff commit was added to the new branch: $RBRANCH_NAME"
 
             # Only add changed non-workflow files, safe for spaces
             git status --porcelain | awk '{print $2}' | while IFS= read -r file; do git add "$file"; done
@@ -84,7 +83,7 @@ jobs:
           fi
         shell: bash
 
-  super-linter:   
+  super-linter:
     needs: ruff-action
     uses: WorkOfStan/seablast-actions/.github/workflows/linter.yml@v0.2.3
     with:
