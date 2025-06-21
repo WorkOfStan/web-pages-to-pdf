@@ -34,55 +34,9 @@ jobs:
         uses: WorkOfStan/prettier-fix@feature/leveldebug
         with:
           commit-changes: ${{ github.event_name != 'schedule' }}
-          debug: false
-
-  ruff-action:
-    needs: prettier-fix
-    runs-on: "ubuntu-latest"
-    permissions:
-      contents: write
-    timeout-minutes: 10
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: ruff-action
-        # This action adds ruff to the PATH, so you can use it in subsequent steps.
-        uses: astral-sh/ruff-action@v3.4.0
-        with:
-          args: "--version"
-
-      - name: "ruff fix and format"
-        run: |
-          #ruff --version
-          ruff check --fix .
-          ruff format .
-
-          # Todo below only if changed
-          RBRANCH_NAME="ruff/fix-$(date +'%y%m%d%H%M%S')-$(git rev-parse --short HEAD)"
-          echo "${RBRANCH_NAME}"
-          #git checkout -b "$RBRANCH_NAME"
-          #RNOTICE_MESSAGE="A Ruff commit was added to the new branch: $RBRANCH_NAME"
-          
-          # Only add changed non-workflow files, safe for spaces
-          #git status --porcelain | awk '{print $2}' | grep -vE '^.github/workflows/' | while IFS= read -r file; do git add "$file"; done
-
-          # Configure Git user
-          #git config user.name "github-actions[bot]"
-          #git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          # Commit and push changes with custom message
-          #git commit -m "inputs.commit-message on $(date +'%Y-%m-%d %H:%M:%S') UTC"
-
-          #echo "::notice title=Ruff commit adding::${RNOTICE_MESSAGE}"
-          #git push origin "${RBRANCH_NAME}"
-
-          #RCOMMIT_URL=${{ github.server_url }}/${{ github.repository }}/commit/$(git rev-parse HEAD)
-          #echo "::notice title=View the Ruff commit::${RCOMMIT_URL}"
-        shell: bash
 
   super-linter:
-    needs: ruff-action
+    needs: prettier-fix
     uses: WorkOfStan/seablast-actions/.github/workflows/linter.yml@v0.2.3
     with:
       runs-on: "ubuntu-latest"
