@@ -23,7 +23,6 @@ permissions:
 
 jobs:
   ruff-action:
-    needs: prettier-fix
     runs-on: "ubuntu-latest"
     permissions:
       contents: write
