@@ -2,11 +2,11 @@ import argparse
 import csv
 import os
 import re
-import requests
-import subprocess
 import shlex
+import subprocess
 from urllib.parse import urlparse
 
+import requests
 from bs4 import BeautifulSoup
 
 WAYBACK_API = "http://archive.org/wayback/available?url={url}"
