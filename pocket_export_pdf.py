@@ -12,15 +12,16 @@ WAYBACK_API = "http://archive.org/wayback/available?url={url}"
 
 
 def sanitize_filename(name):
-    # Remove invalid filename characters
+    """Remove invalid filename characters."""
     return re.sub(r'[\\/*?:"<>|]', "", name).strip()
 
 
 def save_pdf_with_chrome(url, output_path, chrome_path='chrome'):
-    cmd = f'"{chrome_path}" --headless --disable-gpu --no-margins --print-to-pdf="{output_path}" "{url}"'
+    absolute_path = os.path.abspath(output_path)
+    cmd = f'"{chrome_path}" --headless --disable-gpu --no-margins --print-to-pdf="{absolute_path}" "{url}"'
     try:
         subprocess.run(shlex.split(cmd), check=True)
-        print(f"Saved PDF: {output_path}")
+        print(f"Saved PDF: {absolute_path}")
         return True
     except subprocess.CalledProcessError as e:
         print(f"Error generating PDF for {url}: {e}")
