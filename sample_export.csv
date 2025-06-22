@@ -1,0 +1,5 @@
+﻿item_id,resolved_url,resolved_title,time_added,tags,excerpt
+12345678,https://example.com/article1,Example Article 1,1687423200,"tag1,tag2","This is a snippet. Respond with 404."
+87654321,https://news.ycombinator.com,Hacker News,1687419600,,"Top tech news site."
+23456789,https://python.org,Python Official Website,1687400000,"python,programming","Official Python language site."
+45646545,http://www.kdesehraje.cz/,Kde se hraje fotbal,1687400800,"sport","Unavailable already."

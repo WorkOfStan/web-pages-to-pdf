@@ -13,7 +13,7 @@ Supports fallback to Wayback Machine if the original page is inaccessible.
 
 ## Features
 
-- Parse Pocket HTML export to extract URLs and labels.
+- Parse Pocket CSV export to extract URLs and labels.
 - Download web pages as PDFs.
 - Organize PDFs in folders named by label.
 - Fallback to Wayback Machine archive if original URL is inaccessible.
@@ -36,7 +36,7 @@ Supports fallback to Wayback Machine if the original page is inaccessible.
 ## Usage
 
 ```bash
-python pocket_export_pdf.py --input pocket_export.html --output ./pdf_archive [--chrome "/path/to/chrome."]
+python pocket_export_pdf.py --input sample_export.csv --output ./pdf_archive [--chrome "/path/to/chrome."]
 ```
 
 ### Path to Chrome

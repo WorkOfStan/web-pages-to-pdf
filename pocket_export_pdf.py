@@ -2,6 +2,7 @@ import argparse
 import csv
 import os
 import re
+import requests
 import subprocess
 import shlex
 from urllib.parse import urlparse
@@ -76,11 +77,24 @@ def parse_pocket_export(file_path):
     return links
 
 
+def is_url_accessible(url, timeout=5):
+    try:
+        # Some webservers don't answer right to requests.head
+        #response = requests.head(url, allow_redirects=True, timeout=timeout)
+        response = requests.get(url, stream=True, timeout=timeout)
+        print(f"Get response status code: {response.status_code}")
+        # Consider accessible if status code is 200–399
+        return 200 <= response.status_code < 400
+    except requests.RequestException:
+        return False
+
+
 def generate_pdfs(links, output_dir, chrome_path):
     os.makedirs(output_dir, exist_ok=True)
 
     for idx, link in enumerate(links, 1):
         url = link['url']
+        print(f"Processing ({idx}/{len(links)}): {url}")        
         title = sanitize_filename(link['title']) or f"page_{idx}"
         tags = link['tags'] or ['Unlabeled']
 
@@ -90,19 +104,26 @@ def generate_pdfs(links, output_dir, chrome_path):
         domain = urlparse(url).netloc.replace("www.", "")
         filename = f"{title}_{domain}_{idx}.pdf"
         output_path = os.path.join(folder, filename)
-
-        print(f"Processing ({idx}/{len(links)}): {url}")
-        if save_pdf_with_chrome(url, output_path, chrome_path=chrome_path):
+        if os.path.exists(output_path):
+            print(f"Skipping existing PDF: {output_path}")
             continue
 
-        print(f"Failed to download live page, trying Wayback Machine fallback for {url}")
-        archive_url = fetch_wayback_url(url)
-        if archive_url:
-            print(f"Found archive.org snapshot: {archive_url}")
-            if not save_pdf_with_chrome(archive_url, output_path, chrome_path=chrome_path):
-                print(f"Failed to save PDF from archive.org for {url}")
+        if is_url_accessible(url, 10):
+            success = save_pdf_with_chrome(url, output_path, chrome_path=chrome_path)
         else:
-            print(f"No archive.org snapshot found for {url}")
+            success = False
+            print(f"URL not accessible: {url}")
+
+        if not success:
+            print(f"Trying Wayback Machine fallback for {url}")
+            archive_url = fetch_wayback_url(url)
+            if archive_url:
+                print(f"Found archive.org snapshot: {archive_url}")
+                save_pdf_with_chrome(archive_url, output_path, chrome_path=chrome_path)
+            else:
+                print(f"No archive.org snapshot found for {url}")
+                #print(f"Trying directly one more time.") # e.g. for 404 response
+                #save_pdf_with_chrome(url, output_path, chrome_path=chrome_path)
 
 
 def main():
