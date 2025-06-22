@@ -22,28 +22,25 @@ Supports fallback to Wayback Machine if the original page is inaccessible.
 ## Requirements
 
 - Python 3.7+
-- `wkhtmltopdf` binary installed and in your PATH (<https://wkhtmltopdf.org/>)
+- Chrome (used for headless rendering; wkhtmltopdf could be used instead)
 
 ## Installation
 
 1. Clone the repository or download the script.
-2. Create a Python virtual environment (recommended):
-
-```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install Python dependencies:
+2. Install Python dependencies:
 
 ```bash
    pip install -r requirements.txt
 ```
 
-4. Make sure `wkhtmltopdf` is installed and accessible from the command line.
-
 ## Usage
 
 ```bash
-python pocket_export_pdf.py --input pocket_export.html --output ./pdf_archive
+python pocket_export_pdf.py --input pocket_export.html --output ./pdf_archive [--chrome "/path/to/chrome."]
 ```
+
+### Path to Chrome
+
+- Windows: "C:/Program Files/Google/Chrome/Application/chrome.exe"
+- macOS: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+- Linux: usually just "google-chrome" or "chrome"

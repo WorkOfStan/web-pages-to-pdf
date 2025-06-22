@@ -1,3 +1,2 @@
-pdfkit
-requests
 beautifulsoup4
+requests
