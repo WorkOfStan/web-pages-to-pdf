@@ -1,3 +1,11 @@
+"""
+PocketExportPDF
+
+This module converts Pocket CSV exports or URL lists into organized PDFs
+using Chrome in headless mode. It supports fallback to archive.org if URLs
+are not accessible.
+"""
+
 import argparse
 import csv
 import os
@@ -18,8 +26,19 @@ def sanitize_filename(name):
 
 
 def save_pdf_with_chrome(url, output_path, chrome_path="chrome"):
+    """
+    Save the web page at the given URL as a PDF file using headless Chrome.
+
+    Args:
+        url (str): URL of the web page to save.
+        output_path (str): Full file path to save the PDF.
+        chrome_path (str): Path to Chrome or Chromium executable.
+
+    Returns:
+        bool: True if PDF was created successfully, False otherwise.
+    """
     absolute_path = os.path.abspath(output_path)
-    cmd = f'"{chrome_path}" --headless --disable-gpu --no-margins --print-to-pdf="{absolute_path}" "{url}"'
+    cmd = f'"{chrome_path}" --headless --disable-gpu --print-to-pdf="{absolute_path}" "{url}"'
     try:
         subprocess.run(shlex.split(cmd), check=True)
         print(f"Saved PDF: {absolute_path}")
@@ -30,7 +49,15 @@ def save_pdf_with_chrome(url, output_path, chrome_path="chrome"):
 
 
 def fetch_wayback_url(url):
-    """Check archive.org for closest snapshot URL."""
+    """
+    Query archive.org Wayback Machine API for closest archived snapshot URL.
+
+    Args:
+        url (str): Original URL to check archive for.
+
+    Returns:
+        str or None: Archive URL if available, else None.
+    """
     try:
         r = requests.get(WAYBACK_API.format(url=url), timeout=10)
         r.raise_for_status()
@@ -38,13 +65,21 @@ def fetch_wayback_url(url):
         snapshots = data.get("archived_snapshots", {})
         if "closest" in snapshots:
             return snapshots["closest"]["url"]
-    except Exception as e:
+    except requests.RequestException as e:
         print(f"Wayback API error for {url}: {e}")
     return None
 
 
 def html_parse_pocket_export(file_path):
-    """Parse Pocket export HTML and return list of dict {url, title, tags}."""
+    """
+    Parse Pocket export HTML and return list of dicts with keys: url, title, tags.
+
+    Args:
+        file_path (str): Path to Pocket HTML export file.
+
+    Returns:
+        list of dict: Each dict contains 'url', 'title', 'tags' (list).
+    """
     with open(file_path, "r", encoding="utf-8") as f:
         soup = BeautifulSoup(f, "html.parser")
     links = []
@@ -62,7 +97,13 @@ def html_parse_pocket_export(file_path):
 
 def parse_pocket_export(file_path):
     """
-    Parse Pocket CSV export and return list of dict {url, title, tags}.
+    Parse Pocket CSV export and return list of dicts with keys: url, title, tags.
+
+    Args:
+        file_path (str): Path to Pocket CSV export file.
+
+    Returns:
+        list of dict: Each dict contains 'url', 'title', 'tags' (list).
     """
     links = []
     with open(file_path, newline="", encoding="utf-8") as csvfile:
@@ -80,6 +121,16 @@ def parse_pocket_export(file_path):
 
 
 def is_url_accessible(url, timeout=5):
+    """
+    Check if a URL is accessible by sending a GET request.
+
+    Args:
+        url (str): URL to check.
+        timeout (int): Timeout in seconds for the request.
+
+    Returns:
+        bool: True if status code is 200–399, False otherwise.
+    """
     try:
         # Some webservers don't answer right to requests.head
         # response = requests.head(url, allow_redirects=True, timeout=timeout)
@@ -92,6 +143,14 @@ def is_url_accessible(url, timeout=5):
 
 
 def generate_pdfs(links, output_dir, chrome_path):
+    """
+    Generate PDFs from list of links organized by tags using Chrome headless.
+
+    Args:
+        links (list): List of dicts with 'url', 'title', 'tags'.
+        output_dir (str): Base directory to save PDFs.
+        chrome_path (str): Path to Chrome executable.
+    """
     os.makedirs(output_dir, exist_ok=True)
 
     for idx, link in enumerate(links, 1):
@@ -129,6 +188,7 @@ def generate_pdfs(links, output_dir, chrome_path):
 
 
 def main():
+    """Main CLI entry point to parse arguments and start PDF generation."""
     parser = argparse.ArgumentParser(
         description="Convert Pocket export or URL list to PDFs via Chrome headless"
     )
