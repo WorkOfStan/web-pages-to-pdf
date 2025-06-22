@@ -17,7 +17,7 @@ def sanitize_filename(name):
     return re.sub(r'[\\/*?:"<>|]', "", name).strip()
 
 
-def save_pdf_with_chrome(url, output_path, chrome_path='chrome'):
+def save_pdf_with_chrome(url, output_path, chrome_path="chrome"):
     absolute_path = os.path.abspath(output_path)
     cmd = f'"{chrome_path}" --headless --disable-gpu --no-margins --print-to-pdf="{absolute_path}" "{url}"'
     try:
@@ -65,22 +65,24 @@ def parse_pocket_export(file_path):
     Parse Pocket CSV export and return list of dict {url, title, tags}.
     """
     links = []
-    with open(file_path, newline='', encoding='utf-8') as csvfile:
+    with open(file_path, newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            url = row.get('resolved_url') or row.get('given_url')  # fallback if resolved_url missing
-            title = row.get('resolved_title') or row.get('given_title') or "untitled"
-            tags_str = row.get('tags') or ""
-            tags = [t.strip() for t in tags_str.split(',')] if tags_str else []
+            url = row.get("resolved_url") or row.get(
+                "given_url"
+            )  # fallback if resolved_url missing
+            title = row.get("resolved_title") or row.get("given_title") or "untitled"
+            tags_str = row.get("tags") or ""
+            tags = [t.strip() for t in tags_str.split(",")] if tags_str else []
             if url:
-                links.append({'url': url, 'title': title, 'tags': tags})
+                links.append({"url": url, "title": title, "tags": tags})
     return links
 
 
 def is_url_accessible(url, timeout=5):
     try:
         # Some webservers don't answer right to requests.head
-        #response = requests.head(url, allow_redirects=True, timeout=timeout)
+        # response = requests.head(url, allow_redirects=True, timeout=timeout)
         response = requests.get(url, stream=True, timeout=timeout)
         print(f"Get response status code: {response.status_code}")
         # Consider accessible if status code is 200–399
@@ -93,10 +95,10 @@ def generate_pdfs(links, output_dir, chrome_path):
     os.makedirs(output_dir, exist_ok=True)
 
     for idx, link in enumerate(links, 1):
-        url = link['url']
-        print(f"Processing ({idx}/{len(links)}): {url}")        
-        title = sanitize_filename(link['title']) or f"page_{idx}"
-        tags = link['tags'] or ['Unlabeled']
+        url = link["url"]
+        print(f"Processing ({idx}/{len(links)}): {url}")
+        title = sanitize_filename(link["title"]) or f"page_{idx}"
+        tags = link["tags"] or ["Unlabeled"]
 
         folder = os.path.join(output_dir, sanitize_filename(tags[0]))
         os.makedirs(folder, exist_ok=True)
@@ -122,15 +124,23 @@ def generate_pdfs(links, output_dir, chrome_path):
                 save_pdf_with_chrome(archive_url, output_path, chrome_path=chrome_path)
             else:
                 print(f"No archive.org snapshot found for {url}")
-                #print(f"Trying directly one more time.") # e.g. for 404 response
-                #save_pdf_with_chrome(url, output_path, chrome_path=chrome_path)
+                # print(f"Trying directly one more time.") # e.g. for 404 response
+                # save_pdf_with_chrome(url, output_path, chrome_path=chrome_path)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Convert Pocket export or URL list to PDFs via Chrome headless")
-    parser.add_argument('--input', required=True, help='Path to Pocket export HTML file')
-    parser.add_argument('--output', required=True, help='Output directory for PDFs')
-    parser.add_argument('--chrome', default='chrome', help='Path to Chrome/Chromium executable (default: "chrome")')
+    parser = argparse.ArgumentParser(
+        description="Convert Pocket export or URL list to PDFs via Chrome headless"
+    )
+    parser.add_argument(
+        "--input", required=True, help="Path to Pocket export HTML file"
+    )
+    parser.add_argument("--output", required=True, help="Output directory for PDFs")
+    parser.add_argument(
+        "--chrome",
+        default="chrome",
+        help='Path to Chrome/Chromium executable (default: "chrome")',
+    )
     args = parser.parse_args()
 
     print(f"Parsing export file: {args.input}")
