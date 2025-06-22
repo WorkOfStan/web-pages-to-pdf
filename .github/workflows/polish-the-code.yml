@@ -1,0 +1,90 @@
+---
+name: Polish the code
+
+on:
+  push:
+    branches-ignore:
+      # notest branches to ignore testing of partial online commits
+      - "notest/**"
+
+  pull_request:
+    branches-ignore:
+      # notest branches to ignore testing of partial online commits
+      - "notest/**"
+
+  schedule:
+    # Run the workflow at 6:30 AM UTC on the 18th of every month
+    - cron: "30 6 18 * *"
+    # Scheduled runs do not commit-changes automatically to the same branch
+
+permissions:
+  # only prettier-fix and phpcs-phpcbf need write permission, for others read is enough
+  contents: read
+
+jobs:
+  prettier-fix:
+    # Note: runs-on doesn't accept all expressions, so a string is used
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: write
+    # Limit the running time
+    timeout-minutes: 10
+    steps:
+      - name: Invoke the Prettier fix
+        uses: WorkOfStan/prettier-fix@v1.1.5
+        with:
+          commit-changes: ${{ github.event_name != 'schedule' }}
+
+  ruff-action:
+    needs: prettier-fix
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: write
+    timeout-minutes: 10
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: ruff-action
+        # This action adds ruff to the PATH, so you can use it in subsequent steps.
+        uses: astral-sh/ruff-action@v3.4.0
+        with:
+          args: "--version"
+
+      - name: "ruff fix and format"
+        run: |
+          ruff check --fix .
+          ruff format .
+
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Changes detected by Ruff. Proceeding with commit and push."
+            # your logic for committing, pushing, setting branch-name, etc.
+
+            RBRANCH_NAME="ruff/fix-$(date +'%y%m%d%H%M%S')-$(git rev-parse --short HEAD)"
+            echo "${RBRANCH_NAME}"
+            git checkout -b "$RBRANCH_NAME"
+            #RNOTICE_MESSAGE="A Ruff commit was added to the new branch: $RBRANCH_NAME"
+
+            # Only add changed non-workflow files, safe for spaces
+            git status --porcelain | awk '{print $2}' | while IFS= read -r file; do git add "$file"; done
+
+            # Configure Git user
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+            # Commit and push changes with custom message
+            git commit -m "inputs.commit-message on $(date +'%Y-%m-%d %H:%M:%S') UTC"
+
+            #echo "::notice title=Ruff commit adding::${RNOTICE_MESSAGE}"
+            git push origin "${RBRANCH_NAME}"
+
+            RCOMMIT_URL=${{ github.server_url }}/${{ github.repository }}/commit/$(git rev-parse HEAD)
+            echo "::notice title=View the Ruff commit::${RCOMMIT_URL}"
+          fi
+        shell: bash
+
+  super-linter:
+    needs: ruff-action
+    uses: WorkOfStan/seablast-actions/.github/workflows/linter.yml@v0.2.3
+    with:
+      runs-on: "ubuntu-latest"

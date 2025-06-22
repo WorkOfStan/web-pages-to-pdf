@@ -1,0 +1,20 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Environment files
+.env
+venv/
+.envrc
+
+# MacOS files
+.DS_Store
+
+# Generated files
+pdf_archive/
