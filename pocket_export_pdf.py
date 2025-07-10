@@ -207,7 +207,9 @@ def generate_pdfs(links, output_dir, chrome_path):
                     archive_url, output_path, chrome_path=chrome_path
                 )
                 if not success2:
-                    logging.warning("Failed downloading archive.org snapshot: %s", archive_url)
+                    logging.warning(
+                        "Failed downloading archive.org snapshot: %s", archive_url
+                    )
             else:
                 print(f"{RED}No archive.org snapshot found for {url}{RESET}")
                 print(
@@ -217,7 +219,11 @@ def generate_pdfs(links, output_dir, chrome_path):
                     url, output_path, chrome_path=chrome_path
                 )
                 if success2:
-                    logging.warning('Double check downloading snapshot directly: %s : "%s"', url, output_path)
+                    logging.warning(
+                        'Double check downloading snapshot directly: %s : "%s"',
+                        url,
+                        output_path,
+                    )
                 else:
                     logging.warning("Failed downloading snapshot directly: %s", url)
 
