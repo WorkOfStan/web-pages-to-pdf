@@ -16,6 +16,10 @@ Supports fallback to Wayback Machine if the original page is inaccessible.
 - Organize PDFs in folders named by label. - This script uses only the first tag for folder. (Todo: You can extend to multiple labels.)
 - Fallback to Wayback Machine archive if original URL is inaccessible.
 - Configurable PDF file naming. - PDF naming uses title + domain + index for uniqueness.
+- Tags delimiters are `,` and `|`.
+- Tries to download URLs directly, if previous attempts fail. Some pages block indirect attempts. Some pages really don't exist anymore.
+- Writes warnings into url_retrieval.log.
+- coloured output for better orientation (BLUE = start, RED = wrong, GREEN = correct).
 
 ## Requirements
 

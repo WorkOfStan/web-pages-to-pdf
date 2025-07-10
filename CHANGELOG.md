@@ -9,7 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added` for new features
 
+- title, url - header of an actual getPocket CSV export
+- log unsuccessful downloads
+- coloured output for better orientation (BLUE = start, RED = wrong, GREEN = correct)
+
 ### `Changed` for changes in existing functionality
+
+- Tags delimiters are `,` and `|`.
+- Try to download directly, if previous attempts fail. Some pages block indirect attempts. Some pages really don't exist anymore.
 
 ### `Deprecated` for soon-to-be removed features
 

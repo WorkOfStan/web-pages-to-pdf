@@ -8,6 +8,7 @@ are not accessible.
 
 import argparse
 import csv
+import logging
 import os
 import re
 import shlex
@@ -17,7 +18,18 @@ from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
 
+BLUE  = "\033[34m"
+GREEN = "\033[32m"
+RED   = "\033[31m"
+RESET = "\033[0m"
 WAYBACK_API = "http://archive.org/wayback/available?url={url}"
+
+# Configure logger once, near the top of your script
+logging.basicConfig(
+    filename='url_retrieval.log', # file to write to
+    level=logging.INFO, # log level
+    format='%(asctime)s %(levelname)s: %(message)s'
+)
 
 
 def sanitize_filename(name):
@@ -41,10 +53,10 @@ def save_pdf_with_chrome(url, output_path, chrome_path="chrome"):
     cmd = f'"{chrome_path}" --headless --disable-gpu --print-to-pdf="{absolute_path}" "{url}"'
     try:
         subprocess.run(shlex.split(cmd), check=True)
-        print(f"Saved PDF: {absolute_path}")
+        print(f"{GREEN}Saved PDF: {absolute_path}{RESET}")
         return True
     except subprocess.CalledProcessError as e:
-        print(f"Error generating PDF for {url}: {e}")
+        print(f"{RED}Error generating PDF for {url}: {e}{RESET}")
         return False
 
 
@@ -66,7 +78,7 @@ def fetch_wayback_url(url):
         if "closest" in snapshots:
             return snapshots["closest"]["url"]
     except requests.RequestException as e:
-        print(f"Wayback API error for {url}: {e}")
+        print(f"{RED}Wayback API error for {url}: {e}{RESET}")
     return None
 
 
@@ -97,7 +109,7 @@ def html_parse_pocket_export(file_path):
 
 def parse_pocket_export(file_path):
     """
-    Parse Pocket CSV export and return list of dicts with keys: url, title, tags.
+    Parse Pocket CSV export and return list of dicts with keys: url, title, tags. Tags delimiters are `,` and `|`.
 
     Args:
         file_path (str): Path to Pocket CSV export file.
@@ -109,14 +121,15 @@ def parse_pocket_export(file_path):
     with open(file_path, newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            url = row.get("resolved_url") or row.get(
-                "given_url"
-            )  # fallback if resolved_url missing
-            title = row.get("resolved_title") or row.get("given_title") or "untitled"
+            url = row.get("resolved_url") or row.get("given_url") or row.get("url")
+            title = row.get("resolved_title") or row.get("given_title") or row.get("title") or "untitled"
             tags_str = row.get("tags") or ""
-            tags = [t.strip() for t in tags_str.split(",")] if tags_str else []
+            tags = [t.strip() for t in tags_str.replace("|", ",").split(",")] if tags_str else []
             if url:
                 links.append({"url": url, "title": title, "tags": tags})
+    # debug
+    # print("links")
+    # print(links)
     return links
 
 
@@ -155,7 +168,7 @@ def generate_pdfs(links, output_dir, chrome_path):
 
     for idx, link in enumerate(links, 1):
         url = link["url"]
-        print(f"Processing ({idx}/{len(links)}): {url}")
+        print(f"{BLUE}Processing ({idx}/{len(links)}): {url}{RESET}")
         title = sanitize_filename(link["title"]) or f"page_{idx}"
         tags = link["tags"] or ["Unlabeled"]
 
@@ -173,18 +186,24 @@ def generate_pdfs(links, output_dir, chrome_path):
             success = save_pdf_with_chrome(url, output_path, chrome_path=chrome_path)
         else:
             success = False
-            print(f"URL not accessible: {url}")
+            print(f"{RED}URL not accessible: {url}{RESET}")
 
         if not success:
             print(f"Trying Wayback Machine fallback for {url}")
             archive_url = fetch_wayback_url(url)
             if archive_url:
-                print(f"Found archive.org snapshot: {archive_url}")
-                save_pdf_with_chrome(archive_url, output_path, chrome_path=chrome_path)
+                print(f"{GREEN}Found archive.org snapshot: {archive_url}{RESET}")
+                success_archive = save_pdf_with_chrome(archive_url, output_path, chrome_path=chrome_path)
+                if not success_archive:
+                    logging.warning(f"Failed downloading archive.org snapshot: {archive_url}")
             else:
-                print(f"No archive.org snapshot found for {url}")
-                # print(f"Trying directly one more time.") # e.g. for 404 response
-                # save_pdf_with_chrome(url, output_path, chrome_path=chrome_path)
+                print(f"{RED}No archive.org snapshot found for {url}{RESET}")
+                print(f"Trying directly one more time.") # e.g. for 404 response (could be made optional)
+                success_direct = save_pdf_with_chrome(url, output_path, chrome_path=chrome_path)
+                if success_direct:
+                    logging.warning(f"Double check downloading snapshot directly: {url} : \"{output_path}\"")
+                else:
+                    logging.warning(f"Failed downloading snapshot directly: {url}")
 
 
 def main():
