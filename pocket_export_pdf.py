@@ -18,17 +18,17 @@ from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
 
-BLUE  = "\033[34m"
+BLUE = "\033[34m"
 GREEN = "\033[32m"
-RED   = "\033[31m"
+RED = "\033[31m"
 RESET = "\033[0m"
 WAYBACK_API = "http://archive.org/wayback/available?url={url}"
 
 # Configure logger once, near the top of your script
 logging.basicConfig(
-    filename='url_retrieval.log', # file to write to
-    level=logging.INFO, # log level
-    format='%(asctime)s %(levelname)s: %(message)s'
+    filename="url_retrieval.log",  # file to write to
+    level=logging.INFO,  # log level
+    format="%(asctime)s %(levelname)s: %(message)s",
 )
 
 
@@ -122,9 +122,18 @@ def parse_pocket_export(file_path):
         reader = csv.DictReader(csvfile)
         for row in reader:
             url = row.get("resolved_url") or row.get("given_url") or row.get("url")
-            title = row.get("resolved_title") or row.get("given_title") or row.get("title") or "untitled"
+            title = (
+                row.get("resolved_title")
+                or row.get("given_title")
+                or row.get("title")
+                or "untitled"
+            )
             tags_str = row.get("tags") or ""
-            tags = [t.strip() for t in tags_str.replace("|", ",").split(",")] if tags_str else []
+            tags = (
+                [t.strip() for t in tags_str.replace("|", ",").split(",")]
+                if tags_str
+                else []
+            )
             if url:
                 links.append({"url": url, "title": title, "tags": tags})
     # debug
@@ -193,15 +202,25 @@ def generate_pdfs(links, output_dir, chrome_path):
             archive_url = fetch_wayback_url(url)
             if archive_url:
                 print(f"{GREEN}Found archive.org snapshot: {archive_url}{RESET}")
-                success_archive = save_pdf_with_chrome(archive_url, output_path, chrome_path=chrome_path)
+                success_archive = save_pdf_with_chrome(
+                    archive_url, output_path, chrome_path=chrome_path
+                )
                 if not success_archive:
-                    logging.warning(f"Failed downloading archive.org snapshot: {archive_url}")
+                    logging.warning(
+                        f"Failed downloading archive.org snapshot: {archive_url}"
+                    )
             else:
                 print(f"{RED}No archive.org snapshot found for {url}{RESET}")
-                print(f"Trying directly one more time.") # e.g. for 404 response (could be made optional)
-                success_direct = save_pdf_with_chrome(url, output_path, chrome_path=chrome_path)
+                print(
+                    "Trying directly one more time."
+                )  # e.g. for 404 response (could be made optional)
+                success_direct = save_pdf_with_chrome(
+                    url, output_path, chrome_path=chrome_path
+                )
                 if success_direct:
-                    logging.warning(f"Double check downloading snapshot directly: {url} : \"{output_path}\"")
+                    logging.warning(
+                        f'Double check downloading snapshot directly: {url} : "{output_path}"'
+                    )
                 else:
                     logging.warning(f"Failed downloading snapshot directly: {url}")
 
