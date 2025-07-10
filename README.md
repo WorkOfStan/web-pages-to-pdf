@@ -32,13 +32,13 @@ Supports fallback to Wayback Machine if the original page is inaccessible.
 2. Install Python dependencies:
 
 ```bash
-   pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Usage
 
 ```bash
-python pocket_export_pdf.py --input sample_export.csv --output ./pdf_archive [--chrome "/path/to/chrome."]
+python pocket_export_pdf.py --input getpocket_sample.csv --output ./pdf_getpocket [--chrome "/path/to/chrome"]
 ```
 
 ### Path to Chrome
