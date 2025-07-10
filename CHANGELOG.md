@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added` for new features
 
-- title, url - header of an actual getPocket CSV export
-- log unsuccessful downloads
-- coloured output for better orientation (BLUE = start, RED = wrong, GREEN = correct)
+- Uses also `title`, `url` - i.e. header of an actual getPocket CSV export.
+- Logs unsuccessful and doubtful downloads into url_retrieval.log.
+- Coloured output for better orientation (BLUE = start, RED = wrong, GREEN = correct).
 
 ### `Changed` for changes in existing functionality
 

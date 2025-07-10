@@ -17,4 +17,5 @@ venv/
 .DS_Store
 
 # Generated files
-pdf_archive/
+pdf_*/
+*.log
