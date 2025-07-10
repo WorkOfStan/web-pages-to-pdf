@@ -109,7 +109,8 @@ def html_parse_pocket_export(file_path):
 
 def parse_pocket_export(file_path):
     """
-    Parse Pocket CSV export and return list of dicts with keys: url, title, tags. Tags delimiters are `,` and `|`.
+    Parse Pocket CSV export and return list of dicts with keys: url, title, tags.
+    Tags delimiters are `,` and `|`.
 
     Args:
         file_path (str): Path to Pocket CSV export file.
@@ -202,27 +203,23 @@ def generate_pdfs(links, output_dir, chrome_path):
             archive_url = fetch_wayback_url(url)
             if archive_url:
                 print(f"{GREEN}Found archive.org snapshot: {archive_url}{RESET}")
-                success_archive = save_pdf_with_chrome(
+                success2 = save_pdf_with_chrome(
                     archive_url, output_path, chrome_path=chrome_path
                 )
-                if not success_archive:
-                    logging.warning(
-                        f"Failed downloading archive.org snapshot: {archive_url}"
-                    )
+                if not success2:
+                    logging.warning("Failed downloading archive.org snapshot: %s", archive_url)
             else:
                 print(f"{RED}No archive.org snapshot found for {url}{RESET}")
                 print(
                     "Trying directly one more time."
                 )  # e.g. for 404 response (could be made optional)
-                success_direct = save_pdf_with_chrome(
+                success2 = save_pdf_with_chrome(
                     url, output_path, chrome_path=chrome_path
                 )
-                if success_direct:
-                    logging.warning(
-                        f'Double check downloading snapshot directly: {url} : "{output_path}"'
-                    )
+                if success2:
+                    logging.warning('Double check downloading snapshot directly: %s : "%s"', url, output_path)
                 else:
-                    logging.warning(f"Failed downloading snapshot directly: {url}")
+                    logging.warning("Failed downloading snapshot directly: %s", url)
 
 
 def main():
