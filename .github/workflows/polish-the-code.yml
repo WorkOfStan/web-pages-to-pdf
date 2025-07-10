@@ -73,7 +73,7 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
             # Commit and push changes with custom message
-            git commit -m "inputs.commit-message on $(date +'%Y-%m-%d %H:%M:%S') UTC"
+            git commit -m "Ruff fixes applied automatically on $(date +'%Y-%m-%d %H:%M:%S') UTC"
 
             #echo "::notice title=Ruff commit adding::${RNOTICE_MESSAGE}"
             git push origin "${RBRANCH_NAME}"
