@@ -16,6 +16,11 @@ Supports fallback to Wayback Machine if the original page is inaccessible.
 - Organize PDFs in folders named by label. - This script uses only the first tag for folder. (Todo: You can extend to multiple labels.)
 - Fallback to Wayback Machine archive if original URL is inaccessible.
 - Configurable PDF file naming. - PDF naming uses title + domain + index for uniqueness.
+- Tags delimiters are `,` and `|`.
+- Tries to download URLs directly, if previous attempts fail. Some pages block indirect attempts. Some pages really don't exist anymore.
+- Logs unsuccessful and doubtful downloads into url_retrieval.log.
+- Coloured output for better orientation (BLUE = start, RED = wrong, GREEN = correct).
+- Doesn't try to download already downloaded URLs. So you can delete PDFs that contain some kind of error (medium.com trying to figure out, you're human...) and try again. Only those you deleted will by retried.
 
 ## Requirements
 
@@ -28,13 +33,13 @@ Supports fallback to Wayback Machine if the original page is inaccessible.
 2. Install Python dependencies:
 
 ```bash
-   pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Usage
 
 ```bash
-python pocket_export_pdf.py --input sample_export.csv --output ./pdf_archive [--chrome "/path/to/chrome."]
+python pocket_export_pdf.py --input getpocket_sample.csv --output ./pdf_getpocket [--chrome "/path/to/chrome"]
 ```
 
 ### Path to Chrome
