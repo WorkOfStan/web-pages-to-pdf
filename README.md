@@ -20,6 +20,7 @@ Supports fallback to Wayback Machine if the original page is inaccessible.
 - Tries to download URLs directly, if previous attempts fail. Some pages block indirect attempts. Some pages really don't exist anymore.
 - Logs unsuccessful and doubtful downloads into url_retrieval.log.
 - Coloured output for better orientation (BLUE = start, RED = wrong, GREEN = correct).
+- Doesn't try to download already downloaded URLs. So you can delete PDFs that contain some kind of error (medium.com trying to figure out, you're human...) and try again. Only those you deleted will by retried.
 
 ## Requirements
 
