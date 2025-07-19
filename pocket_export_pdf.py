@@ -37,10 +37,9 @@ def sanitize_filename(name):
     return re.sub(r'[\\/*?:"<>|]', "", name).strip()
 
 
-def save_pdf_with_chrome(url: str,
-                         output_path: str,
-                         chrome_path: str = "chrome",
-                         timeout: int = 25) -> bool:
+def save_pdf_with_chrome(
+    url: str, output_path: str, chrome_path: str = "chrome", timeout: int = 25
+) -> bool:
     """
     Save the web page at the given URL as a PDF file using headless Chrome.
 
@@ -64,7 +63,7 @@ def save_pdf_with_chrome(url: str,
         "--disable-gpu",
         f"--print-to-pdf={absolute_path}",
         url,
-    ]    
+    ]
     try:
         subprocess.run(cmd, check=True, timeout=timeout)
         print(f"{GREEN}Saved PDF: {absolute_path}{RESET}")
