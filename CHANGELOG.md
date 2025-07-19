@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Security` in case of vulnerabilities
 
+## [0.1.2] - 2025-07-19
+
+fix: raise a TimeoutExpired exception if Chrome hasn’t finished within {timeout} seconds to prevent freeze.
+
 ## [0.1.1] - 2025-07-11
 
 feat: processes an actual getPocket CSV export
@@ -40,6 +44,7 @@ feat: processes an actual getPocket CSV export
 
 A simple Python tool to convert your Pocket export or any URL+label list into PDFs, organized by labels for easy offline backup.
 
-[Unreleased]: https://github.com/WorkOfStan/web-pages-to-pdf/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/WorkOfStan/web-pages-to-pdf/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/WorkOfStan/web-pages-to-pdf/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/WorkOfStan/web-pages-to-pdf/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/WorkOfStan/web-pages-to-pdf/releases/tag/v0.1.0
