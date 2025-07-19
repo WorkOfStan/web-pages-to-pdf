@@ -32,7 +32,7 @@ logging.basicConfig(
 )
 
 
-def sanitize_filename(name):
+def sanitize_filename(name) -> str:
     """Remove invalid filename characters."""
     return re.sub(r'[\\/*?:"<>|]', "", name).strip()
 
@@ -161,7 +161,7 @@ def parse_pocket_export(file_path):
     return links
 
 
-def is_url_accessible(url, timeout=5):
+def is_url_accessible(url, timeout=5) -> bool:
     """
     Check if a URL is accessible by sending a GET request.
 
