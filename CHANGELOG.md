@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed` for any bugfixes
 
+- raise a TimeoutExpired exception if Chrome hasn’t finished within {timeout} seconds, thus unlock freeze.
+
 ### `Security` in case of vulnerabilities
 
 ## [0.1.1] - 2025-07-11

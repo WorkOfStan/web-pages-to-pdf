@@ -11,8 +11,8 @@ import csv
 import logging
 import os
 import re
-import shlex
 import subprocess
+from shutil import which
 from urllib.parse import urlparse
 
 import requests
@@ -37,7 +37,10 @@ def sanitize_filename(name):
     return re.sub(r'[\\/*?:"<>|]', "", name).strip()
 
 
-def save_pdf_with_chrome(url, output_path, chrome_path="chrome"):
+def save_pdf_with_chrome(url: str,
+                         output_path: str,
+                         chrome_path: str = "chrome",
+                         timeout: int = 25) -> bool:
     """
     Save the web page at the given URL as a PDF file using headless Chrome.
 
@@ -45,16 +48,32 @@ def save_pdf_with_chrome(url, output_path, chrome_path="chrome"):
         url (str): URL of the web page to save.
         output_path (str): Full file path to save the PDF.
         chrome_path (str): Path to Chrome or Chromium executable.
+        timeout (int): The Chrome process is aborted if it runs longer than *timeout* seconds.
 
     Returns:
-        bool: True if PDF was created successfully, False otherwise.
+        bool: True if PDF was created successfully, False on any failure (timeout or non-zero exit).
     """
+    # Resolve chrome executable if only a bare name is given
+    chrome_exe = which(chrome_path) or chrome_path
+
     absolute_path = os.path.abspath(output_path)
-    cmd = f'"{chrome_path}" --headless --disable-gpu --print-to-pdf="{absolute_path}" "{url}"'
+    # Build the command as a list to avoid shell-quoting problems
+    cmd = [
+        chrome_exe,
+        "--headless",
+        "--disable-gpu",
+        f"--print-to-pdf={absolute_path}",
+        url,
+    ]    
     try:
-        subprocess.run(shlex.split(cmd), check=True)
+        subprocess.run(cmd, check=True, timeout=timeout)
         print(f"{GREEN}Saved PDF: {absolute_path}{RESET}")
         return True
+
+    except subprocess.TimeoutExpired as e:
+        print(f"{RED}Timeout after {e.timeout}s generating PDF for {url}{RESET}")
+        return False
+
     except subprocess.CalledProcessError as e:
         print(f"{RED}Error generating PDF for {url}: {e}{RESET}")
         return False
