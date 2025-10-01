@@ -43,7 +43,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: ruff-action
         # This action adds ruff to the PATH, so you can use it in subsequent steps.
